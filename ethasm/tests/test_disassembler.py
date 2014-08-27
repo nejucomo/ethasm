@@ -5,6 +5,20 @@ import string
 from ethasm import disassembler
 
 
+class dis_other_Tests (unittest.TestCase):
+
+    def test_known_opcodes(self):
+        self.assertEqual('stop', disassembler.dis_other(None, 0x00))
+        self.assertEqual('suicide', disassembler.dis_other(None, 0xff))
+
+    def test_unknown_opcode(self):
+        self.assertRaises(
+            disassembler.MalformedBytecode,
+            disassembler.dis_other,
+            42,
+            -1)
+
+
 class iter_bytes_Tests (unittest.TestCase):
 
     def test_single_buf(self):
