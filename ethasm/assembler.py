@@ -67,7 +67,7 @@ _InstructionRgx = re.compile(
        |"([^"\n]|\\")*(?<!\\)" # String literal.
       )
       | # -or if not push, a single-word mnemonic:
-      [a-z]+
+      [a-z][a-z0-9]*
      )
     )
     $ # End-of-line.  Note: comments are stripped prior to matching instructions.
