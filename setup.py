@@ -6,7 +6,7 @@ from setuptools import setup, find_packages, Command
 
 PACKAGE = 'ethasm'
 INSTALL_REQUIRES = [
-    'pyethereum >= 0.2.4',
+    'pyethereum >= 0.6, < 0.7',
     'twisted >= 14.0',
     'mock >= 1.0.1',
     ]

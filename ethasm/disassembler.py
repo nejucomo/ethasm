@@ -2,8 +2,8 @@
 
 from pyethereum.opcodes import opcodes, reverse_opcodes
 
-PUSH_BASE = reverse_opcodes['PUSH']
-PUSH_CEIL = PUSH_BASE + 32
+PUSH1 = reverse_opcodes['PUSH1']
+PUSH32 = reverse_opcodes['PUSH32']
 
 
 class MalformedBytecode (Exception):
@@ -24,14 +24,14 @@ def iter_dis(inf):
 
 
 def dis_op(it, i, c, opcode):
-    if PUSH_BASE <= opcode < PUSH_CEIL:
+    if PUSH1 <= opcode <= PUSH32:
         return dis_push(it, c, opcode)
     else:
         return dis_other(i, opcode)
 
 
 def dis_push(it, c, opcode):
-    arglen = 1 + opcode - PUSH_BASE
+    arglen = 1 + opcode - PUSH1
     arglelist = read_push_arg(it, arglen)
     argbehex = ''.join(reversed(arglelist)).encode('hex')
     argchars = []
