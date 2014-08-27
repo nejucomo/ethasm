@@ -7,19 +7,19 @@ from ethasm import disassembler
 
 class iter_bytes_Tests (unittest.TestCase):
 
-    def test_iter_bytes_single_buf(self):
+    def test_single_buf(self):
         self._test_iter_bytes(input='foo', bufsize=10)
 
-    def test_iter_bytes_boundary_neg1(self):
+    def test_boundary_neg1(self):
         self._test_iter_bytes(input='foo', bufsize=2)
 
-    def test_iter_bytes_boundary_eq(self):
+    def test_boundary_eq(self):
         self._test_iter_bytes(input='foo', bufsize=3)
 
-    def test_iter_bytes_boundary_pos1(self):
+    def test_boundary_pos1(self):
         self._test_iter_bytes(input='foo', bufsize=4)
 
-    def test_iter_bytes_multi_buf(self):
+    def test_multi_buf(self):
         self._test_iter_bytes(input=string.letters, bufsize=5)
 
     def _test_iter_bytes(self, input, bufsize):
