@@ -25,14 +25,14 @@ def iter_dis(inf):
 
 def dis_op(it, i, c, opcode):
     if PUSH1 <= opcode <= PUSH32:
-        return dis_push(it, c, opcode)
+        return dis_push(it, i, c, opcode)
     else:
         return dis_other(i, opcode)
 
 
-def dis_push(it, c, opcode):
+def dis_push(it, i, c, opcode):
     arglen = 1 + opcode - PUSH1
-    arglelist = read_push_arg(it, arglen)
+    arglelist = read_push_arg(it, i, arglen)
     argbehex = ''.join(reversed(arglelist)).encode('hex')
     argchars = []
     for c in arglelist:
@@ -66,9 +66,15 @@ def iter_bytes(f, bufsize=2**16):
         buf = f.read(bufsize)
 
 
-def read_push_arg(it, count):
+def read_push_arg(it, i, count):
     bytes = []
+
     while len(bytes) < count:
-        (_, byte) = it.next()
-        bytes.append(byte)
+        try:
+            (_, byte) = it.next()
+        except StopIteration:
+            raise MalformedBytecode(i, 'Early EOF decoding PUSH{0}.'.format(count))
+        else:
+            bytes.append(byte)
+
     return bytes
