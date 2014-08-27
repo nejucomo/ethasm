@@ -55,7 +55,7 @@ def dis_other(i, opcode):
     try:
         return opcodes[opcode][0].lower()
     except KeyError:
-        raise MalformedBytecode(i, 'Unknown opcode 0x{1:x}'.format(opcode))
+        raise MalformedBytecode(i, 'Unknown opcode 0x{0:x}'.format(opcode))
 
 
 def iter_bytes(f, bufsize=2**16):
