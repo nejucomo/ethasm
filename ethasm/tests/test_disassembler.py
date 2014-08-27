@@ -1,9 +1,31 @@
 import unittest
+from cStringIO import StringIO
+import string
 
 from ethasm import disassembler
 
 
 class DisassemblerTests (unittest.TestCase):
+
+    def test_iter_bytes_single_buf(self):
+        self._test_iter_bytes(input='foo', bufsize=10)
+
+    def test_iter_bytes_boundary_neg1(self):
+        self._test_iter_bytes(input='foo', bufsize=2)
+
+    def test_iter_bytes_boundary_eq(self):
+        self._test_iter_bytes(input='foo', bufsize=3)
+
+    def test_iter_bytes_boundary_pos1(self):
+        self._test_iter_bytes(input='foo', bufsize=4)
+
+    def test_iter_bytes_multi_buf(self):
+        self._test_iter_bytes(input=string.letters, bufsize=5)
+
+    def _test_iter_bytes(self, input, bufsize):
+        f = StringIO(input)
+        output = ''.join(disassembler.iter_bytes(f, bufsize))
+        self.assertEqual(output, input)
 
     def test_read_push_arg(self):
         bytesin = [1, 2, 3]
