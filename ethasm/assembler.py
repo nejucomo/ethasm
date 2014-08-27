@@ -9,6 +9,8 @@ class ParseError (Exception):
 
 
 def assemble(inf, outf):
+    outf = ByteCountingWriter(outf)
+
     for (lineidx, line) in enumerate(inf.readlines()):
         instruction = _CommentRgx.sub('', line.rstrip())
         sys.stderr.write(
@@ -22,9 +24,19 @@ def assemble(inf, outf):
             raise ParseError(lineidx, 'could not parse: {0!r}'.format(instruction))
         else:
             label = m.group('label')
-            sys.stderr.write(
-                'line {0}, label {1!r} not implemented; ignored.\n'.format(
-                    lineidx+1, label))
+            if label is not None:
+                try:
+                    intlabel = int(label)
+                except ValueError:
+                    sys.stderr.write(
+                        'line {0}, string labels {1!r} not implemented; ignored.\n'.format(
+                            lineidx+1, label))
+                else:
+                    if intlabel != outf.bytecount:
+                        raise ParseError(
+                            lineidx,
+                            'Byte offset assertion label {0} does not match current offset {1}.'.format(
+                                intlabel, outf.bytecount))
 
             pusharg = m.group('pusharg')
             if pusharg is None:
@@ -46,6 +58,19 @@ def assemble_pusharg(lineidx, pusharg):
             lineidx + 1, pusharg))
     return chr(reverse_opcodes['PUSH']) + '\0'
 
+
+class ByteCountingWriter (object):
+    def __init__(self, f):
+        self._f = f
+        self._bytecount = 0
+
+    @property
+    def bytecount(self):
+        return self._bytecount
+
+    def write(self, data):
+        self._f.write(data)
+        self._bytecount += len(data)
 
 
 _InstructionRgx = re.compile(
