@@ -10,13 +10,16 @@ class ParseError (Exception):
 
 def assemble(inf, outf):
     for (lineidx, line) in enumerate(inf.readlines()):
-        instruction = _CommentRgx.sub('', line)
+        instruction = _CommentRgx.sub('', line.rstrip())
+        sys.stderr.write(
+            'line {0}, line {1!r} -> instruction {2!r}\n'.format(
+                lineidx+1, line, instruction))
         if instruction == '':
             continue
 
         m = _InstructionRgx.match(instruction)
         if m is None:
-            raise ParseError(lineidx, 'could not parse: {0!r}'.format(line))
+            raise ParseError(lineidx, 'could not parse: {0!r}'.format(instruction))
         else:
             label = m.group('label')
             sys.stderr.write(
@@ -69,7 +72,7 @@ _InstructionRgx = re.compile(
     )
     $ # End-of-line.  Note: comments are stripped prior to matching instructions.
     ''',
-    re.VERBOSE)
+    re.VERBOSE | re.IGNORECASE)
 
 _CommentRgx = re.compile(r'[ \t]*;.*$')
 

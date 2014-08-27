@@ -34,7 +34,7 @@ def iter_dis(inf):
             else:
                 argstr = repr(''.join(argchars))
 
-            yield i, 'push 0x{0:s} = {1} {2}'.format(
+            yield i, 'push 0x{0:s} ; {1} {2}'.format(
                         argbehex,
                         long(argbehex, 16),
                         argstr)
