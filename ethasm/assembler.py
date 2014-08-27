@@ -66,7 +66,7 @@ _InstructionRgx = re.compile(
        |0x([a-f0-9][a-f0-9])+ # Hexadecimal, or:
        |"([^"\n]|\\")*(?<!\\)" # String literal.
       )
-     ) | ( -or if not push, a single-word mnemonic:
+      | # -or if not push, a single-word mnemonic:
       [a-z]+
      )
     )
