@@ -53,10 +53,33 @@ def assemble_mnemonic(lineidx, mnemonic):
 
 
 def assemble_pusharg(lineidx, pusharg):
-    sys.stderr.write(
-        "line {0}, pusharg not implemented; substituting 'push<1> 0' for {1!r}\n".format(
-            lineidx + 1, pusharg))
-    return chr(reverse_opcodes['PUSH']) + '\0'
+    if pusharg[:2] == '0x':
+        # Hex literal:
+        argbytes = ''.join(reversed(list(pusharg[2:].decode('hex'))))
+    elif pusharg[0] == '"':
+        # String literal:
+        assert pusharg[-1] == '"', `lineidx, pusharg`
+    else:
+        # Decimal literal:
+        i = long(pusharg)
+        if i == 0:
+            argbytes = '\0'
+        else:
+            revbytes = []
+            while i > 0:
+                revbytes.append(chr(i & 0xff))
+                i = i >> 8
+            argbytes = ''.join(reversed(revbytes))
+
+    arglen = len(argbytes)
+    if (0 < arglen <= 32):
+        opcode = chr(_PUSH_BASE + arglen - 1)
+        return opcode + argbytes
+    else:
+        raise ParseError(
+            lineidx,
+            'invalid push argument {0!r} with byte length {1!r} which is not in (0, 32]'.format(
+                pusharg, arglen))
 
 
 class ByteCountingWriter (object):
@@ -101,4 +124,4 @@ _InstructionRgx = re.compile(
 
 _CommentRgx = re.compile(r'[ \t]*;.*$')
 
-
+_PUSH_BASE = reverse_opcodes['PUSH']
